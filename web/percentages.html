@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procente Vizual - Interactiv</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --text-color: #ffffff;
+            --rect1-color: #2b5d8d;
+            --fill1-color: #008080;
+            --rect2-color: #a52a2a;
+            --fill2-color: #ffff00;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container { text-align: center; width: 90%; max-width: 800px; }
+        
+        .inputs {
+            display: flex; gap: 20px; justify-content: center; margin-bottom: 40px;
+            background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px;
+        }
+
+        .input-group { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        input[type="number"] {
+            background: #222; border: 2px solid #444; color: white; padding: 10px;
+            border-radius: 8px; width: 80px; text-align: center; font-size: 1.2em;
+        }
+
+        input[type="range"] {
+            width: 150px;
+            cursor: pointer;
+            accent-color: var(--rect1-color);
+        }
+
+        #sliderB { accent-color: var(--rect2-color); }
+
+        .viz-wrapper {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 450px;
+            position: relative;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 5;
+        }
+
+        .svg-container {
+            position: relative;
+            height: 300px;
+            width: 120px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .label-value { font-size: 2em; font-weight: bold; margin-bottom: 10px; }
+        .label-percent { margin-top: 15px; font-size: 1.2em; min-height: 1.5em; }
+
+        .helper-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            border-top: 2px dashed rgba(255,255,255,0.4);
+            transition: bottom 0.3s ease-out;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .result-label {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.2em;
+            font-weight: bold;
+            color: white;
+            transition: bottom 0.3s ease-out;
+            z-index: 20;
+            background: var(--bg-color);
+            padding: 0 15px;
+            border-radius: 10px;
+        }
+
+        #valA_label { color: var(--rect1-color); }
+        #valB_label { color: var(--rect2-color); }
+        #percB_label { color: var(--fill1-color); }
+        #percA_label { color: var(--fill2-color); }
+        
+        .formula { margin-top: 40px; font-size: 1.5em; color: #888; border-top: 1px solid #333; padding-top: 20px; }
+        
+        .youtube-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #FF0000;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 30px;
+            transition: transform 0.2s;
+        }
+        .youtube-btn:hover { transform: scale(1.05); }
+
+        a.back-btn {
+            position: absolute; top: 20px; left: 20px; color: #888; text-decoration: none; font-size: 0.9em;
+        }
+        a.back-btn:hover { color: white; }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn">← Înapoi la Portofoliu</a>
+
+<div class="container">
+    <div class="inputs">
+        <div class="input-group">
+            <label>Numărul A</label>
+            <input type="number" id="inputA" value="37" min="1" max="100">
+            <input type="range" id="sliderA" value="37" min="1" max="100">
+        </div>
+        <div class="input-group">
+            <label>Numărul B</label>
+            <input type="number" id="inputB" value="19" min="1" max="100">
+            <input type="range" id="sliderB" value="19" min="1" max="100">
+        </div>
+    </div>
+
+    <div class="viz-wrapper">
+        <!-- Dreptunghiul 1 -->
+        <div class="column">
+            <div id="valA_label" class="label-value">37</div>
+            <div class="svg-container">
+                <svg width="120" height="300">
+                    <rect id="rect1_bg" x="10" width="100" fill="none" stroke="#2b5d8d" stroke-width="6" />
+                    <rect id="rect1_fill" x="10" width="100" fill="#008080" fill-opacity="0.8" />
+                </svg>
+            </div>
+            <div id="percB_label" class="label-percent">19% din 37</div>
+        </div>
+
+        <!-- Rezultatul în centru -->
+        <div id="resultLabel" class="result-label"></div>
+
+        <!-- Linia orizontală -->
+        <div id="helperLine" class="helper-line"></div>
+
+        <!-- Dreptunghiul 2 -->
+        <div class="column">
+            <div id="valB_label" class="label-value">19</div>
+            <div class="svg-container">
+                <svg width="120" height="300">
+                    <rect id="rect2_bg" x="10" width="100" fill="none" stroke="#a52a2a" stroke-width="6" />
+                    <rect id="rect2_fill" x="10" width="100" fill="#ffff00" fill-opacity="0.8" />
+                </svg>
+            </div>
+            <div id="percA_label" class="label-percent">37% din 19</div>
+        </div>
+    </div>
+
+    <div class="formula" id="formulaText"></div>
+
+    <a href="https://youtube.com/shorts/PfClY72ePlU?feature=share" target="_blank" class="youtube-btn">
+        <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+        Vezi explicația video pe YouTube
+    </a>
+</div>
+
+<script>
+    const inputA = document.getElementById('inputA');
+    const inputB = document.getElementById('inputB');
+    const sliderA = document.getElementById('sliderA');
+    const sliderB = document.getElementById('sliderB');
+    const helperLine = document.getElementById('helperLine');
+    const resultLabel = document.getElementById('resultLabel');
+    const MAX_H = 300;
+
+    function update(e) {
+        // Sincronizare glisor -> input și invers
+        if (e) {
+            if (e.target === inputA) sliderA.value = inputA.value;
+            if (e.target === sliderA) inputA.value = sliderA.value;
+            if (e.target === inputB) sliderB.value = inputB.value;
+            if (e.target === sliderB) inputB.value = sliderB.value;
+        }
+
+        let A = parseFloat(inputA.value) || 0;
+        let B = parseFloat(inputB.value) || 0;
+        if (A > 100) A = 100; if (B > 100) B = 100;
+
+        const h1 = A * 3;
+        const h2 = B * 3;
+        const fill_h = (A * B * 3) / 100;
+        const actualValue = (A * B) / 100;
+
+        // Dreptunghiuri
+        document.getElementById('rect1_bg').setAttribute('height', h1);
+        document.getElementById('rect1_bg').setAttribute('y', MAX_H - h1);
+        document.getElementById('rect1_fill').setAttribute('height', fill_h);
+        document.getElementById('rect1_fill').setAttribute('y', MAX_H - fill_h);
+
+        document.getElementById('rect2_bg').setAttribute('height', h2);
+        document.getElementById('rect2_bg').setAttribute('y', MAX_H - h2);
+        document.getElementById('rect2_fill').setAttribute('height', fill_h);
+        document.getElementById('rect2_fill').setAttribute('y', MAX_H - fill_h);
+
+        // Labels
+        document.getElementById('valA_label').innerText = Math.round(A);
+        document.getElementById('valB_label').innerText = Math.round(B);
+        document.getElementById('percB_label').innerText = `${Math.round(B)}% din ${Math.round(A)}`;
+        document.getElementById('percA_label').innerText = `${Math.round(A)}% din ${Math.round(B)}`;
+        
+        // Rezultatul numeric în centru
+        resultLabel.innerText = actualValue.toLocaleString('ro-RO', { maximumFractionDigits: 2 });
+        
+        // Formula de jos
+        document.getElementById('formulaText').innerText = `${Math.round(A)}% din ${Math.round(B)} = ${Math.round(B)}% din ${Math.round(A)} = ${actualValue.toLocaleString('ro-RO', { maximumFractionDigits: 2 })}`;
+
+        // Poziționarea liniei și a label-ului de rezultat
+        const baseOffset = 46; // Offset pentru a se alinia cu baza coloanelor
+        helperLine.style.bottom = (fill_h + baseOffset) + "px";
+        resultLabel.style.bottom = (fill_h + baseOffset - 25) + "px"; // "Așezat" pe linie
+    }
+
+    inputA.addEventListener('input', update);
+    inputB.addEventListener('input', update);
+    sliderA.addEventListener('input', update);
+    sliderB.addEventListener('input', update);
+    update();
+</script>
+
+</body>
+</html>
