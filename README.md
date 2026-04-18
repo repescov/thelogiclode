@@ -28,6 +28,12 @@ Explaining why a $+30\%$ increase followed by a $+20\%$ increase results in a $+
 *Status: In Progress*
 Exploring how the definition of "distance" changes the shape of a circle. Visualizes Euclidean ($L_2$), Taxicab ($L_1$), and Chebyshev ($L_\infty$) metrics.
 
+### 6. [Pi Visual](./pi_vizual_eng.py)
+Visualizing the fundamental constant $\pi$ by rolling circles and unrolling their circumferences onto a number line. Shows:
+- Definition of $\pi$ as the constant ratio $\frac{Circumference}{Diameter}$.
+- Dynamic variation of diameter while maintaining the ratio.
+- Focused zoom on the number line at $x = \pi \approx 3.14159\dots$.
+
 ## 🛠️ Requirements
 
 - Python 3.8+
